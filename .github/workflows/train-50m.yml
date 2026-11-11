@@ -281,7 +281,7 @@ jobs:
         # otherwise train-bpe stops below it and the run FAILS FAST — the correct signal that the corpus
         # is too small for the requested vocabulary, rather than silently training a mismatched model.
         run: |
-          read -r TOK_PATH VOCAB < <(python - <<'PY'
+          { read -r TOK_PATH; read -r VOCAB; } < <(python - <<'PY'
           import os, yaml
           cfgp = f"configs/{os.environ['PROFILE']}.yaml"
           c = yaml.safe_load(open(cfgp))
@@ -290,7 +290,8 @@ jobs:
           if p:
               p = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(cfgp)), p))
           vocab = (c.get("model") or c).get("vocab_size", "")
-          print(p, vocab)
+          print(p)
+          print(vocab)
           PY
           )
           if [ -n "$TOK_PATH" ] && [ ! -f "$TOK_PATH" ]; then

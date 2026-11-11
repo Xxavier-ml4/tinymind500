@@ -158,6 +158,14 @@ class TrainingEngine:
             f"{model_config.count_parameters():,} parameters can memorize it. Add data, lower the stage's token budget, "
             f"or lower this source's mixture weight."
             for name, passes in self.planned_passes.items() if passes > MAX_RECOMMENDED_PASSES]
+        if config.max_source_passes > 0:
+            over = {n: p for n, p in self.planned_passes.items() if p > config.max_source_passes}
+            if over:
+                detail = ", ".join(f"{n} {p:.1f}x" for n, p in sorted(over.items()))
+                raise DatasetError(
+                    f"max_source_passes exceeded ({detail}; limit {config.max_source_passes:g}). "
+                    "Add unique data, lower the stage's token budget, or lower the source's "
+                    "mixture weight: refusing to train a memorization run.")
 
         # ---- model / optimizer / schedule --------------------------------------
         self.model = TinyMindTransformer(model_config, seed=config.seed)

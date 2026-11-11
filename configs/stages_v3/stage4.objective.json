@@ -1,0 +1,120 @@
+{
+  "note": "v3 500m objective from the train-50m logs: natural bpb primary (v2 val = 859 memorized-template tokens); large val splits; EOS gated from stage4 (50m EOS rate 0.000); greedy stays gated, sampled diagnostic alongside.",
+  "stage": "stage4",
+  "generation": {
+    "max_new_tokens": 96,
+    "diagnostic_decoding": {
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "no_repeat_ngram_size": 3,
+      "seed": 0
+    },
+    "prompts": [
+      "The sun rose over the",
+      "Once upon a time, there was a",
+      "She opened the door and",
+      "In the morning, the children",
+      "The old man walked slowly to the",
+      "Water flows from the mountains to the",
+      "He picked up the book and began to",
+      "After a long day at work, she"
+    ]
+  },
+  "measurements": [
+    {
+      "name": "validation_loss",
+      "metric": "loss.val_loss",
+      "max": 2.2
+    },
+    {
+      "name": "natural_text_bits_per_byte",
+      "metric": "loss.text_val_bpb",
+      "max": 1.06
+    },
+    {
+      "name": "generation_non_empty",
+      "metric": "generation.non_empty_rate",
+      "min": 0.9
+    },
+    {
+      "name": "generation_length",
+      "metric": "generation.mean_chars",
+      "min": 24
+    },
+    {
+      "name": "generation_not_repetitive",
+      "metric": "generation.mean_repetition",
+      "max": 0.35
+    },
+    {
+      "name": "generation_not_looping",
+      "metric": "generation.looping_rate",
+      "max": 0.25
+    },
+    {
+      "name": "generation_diversity",
+      "metric": "generation.mean_distinct_2",
+      "min": 0.5
+    },
+    {
+      "name": "grammar_word_like",
+      "metric": "grammar.word_like_fraction",
+      "min": 0.8
+    },
+    {
+      "name": "grammar_known_words",
+      "metric": "grammar.known_word_fraction",
+      "min": 0.75
+    },
+    {
+      "name": "grammar_letters",
+      "metric": "grammar.alpha_fraction",
+      "min": 0.9
+    },
+    {
+      "name": "grammar_sentence_capitals",
+      "metric": "grammar.sentence_start_capitalized",
+      "min": 0.6
+    },
+    {
+      "name": "grammar_punctuation_spacing",
+      "metric": "grammar.space_after_punctuation",
+      "min": 0.8
+    },
+    {
+      "name": "natural_text_in_training",
+      "metric": "data.natural_train_bytes",
+      "min": 20000000
+    },
+    {
+      "name": "generation_terminates",
+      "metric": "generation.eos_rate",
+      "min": 0.85
+    }
+  ],
+  "regression": {
+    "max_val_loss_increase": 0.15,
+    "checks": [
+      {
+        "metric": "loss.text_val_bpb",
+        "max_increase": 0.03
+      },
+      {
+        "metric": "generation.mean_repetition",
+        "max_increase": 0.05
+      },
+      {
+        "metric": "generation.mean_distinct_2",
+        "max_decrease": 0.05
+      },
+      {
+        "metric": "grammar.word_like_fraction",
+        "max_decrease": 0.05
+      },
+      {
+        "metric": "grammar.known_word_fraction",
+        "max_decrease": 0.05
+      }
+    ]
+  }
+}

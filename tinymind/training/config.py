@@ -61,6 +61,8 @@ class TrainingConfig:
     # data mixture: {source name: weight}; empty = every source equally weighted
     mixture: dict[str, float] = dataclasses.field(default_factory=dict)
     epoch_examples: int = 0
+    # v3: hard-fail if any source would be seen more than N times (0 = warn only).
+    max_source_passes: float = 0.0
     # bookkeeping cadence and safety
     eval_interval: int = 100
     eval_batches: int = 0          # 0 = the whole validation set

@@ -203,7 +203,8 @@ def cmd_train(args: argparse.Namespace) -> int:
             "weight_decay": args.weight_decay, "checkpoint_interval": args.checkpoint_interval, "eval_interval": args.eval_interval,
             "log_interval": args.log_interval, "max_seq_len": args.max_seq_len, "max_runtime_seconds": args.max_runtime,
             "safety_margin_seconds": args.safety_margin, "overflow": args.overflow, "keep_checkpoints": args.keep_checkpoints,
-            "epoch_examples": args.epoch_examples}.items() if v is not None}
+            "epoch_examples": args.epoch_examples,
+            "max_source_passes": args.max_source_passes}.items() if v is not None}
         if args.packing is not None:
             overrides["packing"] = args.packing == "on"
         sources_raw, curriculum_weights, data_dir = _collect_training_data(args.dataset)
@@ -648,6 +649,8 @@ def register(sub: argparse._SubParsersAction) -> None:
     p.add_argument("--max-steps", type=int, dest="max_steps")
     p.add_argument("--target-tokens", type=int, dest="target_tokens",
                    help="v2 token-budget training: stop the stage after ~N training tokens (derives the step horizon)")
+    p.add_argument("--max-source-passes", type=float, dest="max_source_passes",
+                   help="hard-fail at start-up if any data source would be seen more than N times (0 = warn only)")
     p.add_argument("--max-runtime", type=float, dest="max_runtime", help="seconds; checkpoint + export + exit before this")
     p.add_argument("--safety-margin", type=float, dest="safety_margin", help="seconds reserved for the final checkpoint/export")
     p.add_argument("--stop-after-steps", type=int, dest="stop_after_steps",

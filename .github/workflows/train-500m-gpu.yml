@@ -1,0 +1,29 @@
+# 500m GPU training (self-hosted runner, label: gpu). Parity gate BEFORE training.
+name: train-500m-gpu
+on:
+  workflow_dispatch:
+    inputs:
+      max_steps: {description: "S0 smoke steps", required: false, default: "20", type: string}
+      bf16: {description: "bf16 autocast", required: false, default: "true", type: choice, options: ["true", "false"]}
+permissions: {contents: read}
+jobs:
+  parity-and-train:
+    runs-on: [self-hosted, gpu]
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: |
+          pip install --index-url https://download.pytorch.org/whl/cu124 torch
+          pip install -e ".[dev]"
+      - run: python -m tinymind_gpu.parity --json parity_report.json
+      - run: pytest tests/upgrade/test_gpu_parity.py -v
+      - env: {MAX_STEPS: "${{ inputs.max_steps }}", BF16: "${{ inputs.bf16 }}"}
+        run: |
+          args=(--config 500m --output out --max-steps "$MAX_STEPS" --device cuda --seq 512)
+          if [ "$BF16" = "true" ]; then args+=(--bf16); fi
+          python -m tinymind_gpu.train "${args[@]}" --export-tm
+      - run: python -c "from tinymind.model.tm_export import import_from_tm; print('parameters:', import_from_tm('out/model.tm').count_parameters())"
+      - uses: actions/upload-artifact@v4
+        with: {name: "gpu-smoke-${{ github.run_id }}", path: [parity_report.json, out/losses.json, out/model.tm], retention-days: 14}

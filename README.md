@@ -251,3 +251,10 @@ Apache-2.0 — see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). TinyMind is
 an independent implementation inspired by Needle 2's architecture; see
 [`docs/legal/licensing.md`](docs/legal/licensing.md) for exactly what that
 does and doesn't mean.
+
+
+---
+
+## tinymind500 (v3)
+
+Derived from [Xxavier-ml4/tiny-minds](https://github.com/Xxavier-ml4/tiny-minds) (Apache-2.0, LICENSE/NOTICE retained). Adds the **500M v3 upgrade** designed from the train-50m CI failure analysis: `configs/500m.yaml` (501,090,560 params), `curriculum_v3.json` + `stages_v3/` (11.2B tokens, objective-gated), the `--max-source-passes` memorization hard-fail, and **`tinymind_gpu/`** - a PyTorch trainer whose correctness is defined by numerical parity with the NumPy oracle (`python -m tinymind_gpu.parity`, run on every push by `gpu-parity.yml`). See `docs/training/tinymind-v3-500m-plan.md`.

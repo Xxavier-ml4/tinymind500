@@ -1,0 +1,160 @@
+{
+  "version": 3,
+  "note": "v3 curriculum for 500m, from the train-50m CI logs: budgets in tokens/param (~22 total vs 0.22); stage1 99.99% natural text (50m repeated 32 comprehension examples 3,156x and looped); large val splits (20000 records vs 859 loss tokens); run with --max-source-passes 4. Shipped generators are smoke-scale: real runs MUST supply real shards (FineWeb-Edu/DCLM; OpenWebMath/python-edu; books/wiki).",
+  "total_target_tokens": 11200000000,
+  "examples_per_source": 4000,
+  "stages": {
+    "stage1": {
+      "purpose": "language base",
+      "target_tokens": 8000000000,
+      "learning_rate": 0.0003,
+      "min_learning_rate": 3e-05,
+      "replay_fraction": 0.0,
+      "primary": {
+        "language": 0.55,
+        "grammar": 0.45
+      },
+      "corpus": {
+        "byte_share": 0.9999,
+        "val_records": 20000,
+        "test_records": 4000,
+        "lexicon_words": 50000
+      },
+      "replay": {}
+    },
+    "stage2": {
+      "purpose": "reasoning + math",
+      "target_tokens": 1500000000,
+      "learning_rate": 0.00015,
+      "min_learning_rate": 3e-05,
+      "replay_fraction": 0.3,
+      "primary": {
+        "reasoning": 0.55,
+        "math": 0.45
+      },
+      "corpus": {
+        "byte_share": 0.6,
+        "val_records": 4000,
+        "test_records": 2000,
+        "lexicon_words": 50000
+      },
+      "replay": {
+        "language": 1.0
+      }
+    },
+    "stage3": {
+      "purpose": "knowledge + comprehension",
+      "target_tokens": 1000000000,
+      "learning_rate": 0.00012,
+      "min_learning_rate": 3e-05,
+      "replay_fraction": 0.35,
+      "primary": {
+        "knowledge": 0.55,
+        "comprehension": 0.25,
+        "extraction": 0.2
+      },
+      "corpus": {
+        "byte_share": 0.5,
+        "val_records": 4000,
+        "test_records": 2000,
+        "lexicon_words": 50000
+      },
+      "replay": {
+        "reasoning": 0.5,
+        "language": 0.5
+      }
+    },
+    "stage4": {
+      "purpose": "instruction + dialogue (EOS gated)",
+      "target_tokens": 300000000,
+      "learning_rate": 8e-05,
+      "min_learning_rate": 2e-05,
+      "replay_fraction": 0.4,
+      "primary": {
+        "instruction": 0.5,
+        "dialogue": 0.5
+      },
+      "corpus": {
+        "byte_share": 0.25,
+        "val_records": 2000,
+        "test_records": 1000,
+        "lexicon_words": 50000
+      },
+      "replay": {
+        "reasoning": 0.4,
+        "language": 0.3,
+        "knowledge": 0.3
+      }
+    },
+    "stage5": {
+      "purpose": "tools",
+      "target_tokens": 200000000,
+      "learning_rate": 6e-05,
+      "min_learning_rate": 2e-05,
+      "replay_fraction": 0.45,
+      "primary": {
+        "tools": 1.0
+      },
+      "corpus": {
+        "byte_share": 0.2,
+        "val_records": 2000,
+        "test_records": 1000,
+        "lexicon_words": 50000
+      },
+      "replay": {
+        "reasoning": 0.3,
+        "language": 0.2,
+        "dialogue": 0.3,
+        "knowledge": 0.2
+      }
+    },
+    "stage6": {
+      "purpose": "safety",
+      "target_tokens": 100000000,
+      "learning_rate": 5e-05,
+      "min_learning_rate": 2e-05,
+      "replay_fraction": 0.5,
+      "primary": {
+        "safety": 1.0
+      },
+      "corpus": {
+        "byte_share": 0.2,
+        "val_records": 1000,
+        "test_records": 500,
+        "lexicon_words": 50000
+      },
+      "replay": {
+        "language": 0.25,
+        "reasoning": 0.25,
+        "tools": 0.25,
+        "instruction": 0.25
+      }
+    },
+    "stage7": {
+      "purpose": "integration",
+      "target_tokens": 100000000,
+      "learning_rate": 4e-05,
+      "min_learning_rate": 2e-05,
+      "replay_fraction": 0.5,
+      "primary": {
+        "integration": 1.0
+      },
+      "corpus": {
+        "byte_share": 0.25,
+        "val_records": 1000,
+        "test_records": 500,
+        "lexicon_words": 50000
+      },
+      "replay": {
+        "language": 0.2,
+        "reasoning": 0.15,
+        "knowledge": 0.15,
+        "math": 0.1,
+        "instruction": 0.1,
+        "dialogue": 0.1,
+        "tools": 0.1,
+        "safety": 0.1
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "note": "v3 promotion gate stage7; completion decided by objective, not budget.",
+  "expect_stage": "stage7",
+  "require_stage_complete": true,
+  "require_no_divergence": true,
+  "checks": [
+    {
+      "metric": "summary.final_validation.val_loss",
+      "max": 2.1
+    },
+    {
+      "metric": "eval.capabilities.integration.accuracy",
+      "min": 0.3
+    },
+    {
+      "metric": "eval.capabilities.language.accuracy",
+      "min": 0.25
+    },
+    {
+      "metric": "eval.capabilities.tools.accuracy",
+      "min": 0.3
+    }
+  ]
+}

@@ -1,11 +1,14 @@
-# ~500M parameters (approx_param_count).
+# TinyMind v3: 501,090,560 parameters (exact). GPU-trained via tinymind_gpu;
+# NumPy engine remains the parity oracle. Do NOT run the CPU train-50m workflow
+# on this profile (~34 tok/s, >16 GB RSS). See docs/training/tinymind-v3-500m-plan.md.
+profile: 500m
 model:
-  hidden_size: 1472
-  num_layers: 20
-  num_heads: 16
+  hidden_size: 1280
+  num_layers: 26
+  num_heads: 20
   num_kv_heads: 4
-  intermediate_size: 3904
-  max_seq_len: 4096
+  intermediate_size: 3584
+  max_seq_len: 2048
   vocab_size: 32000
   attention_type: gqa
   norm_type: rmsnorm
@@ -13,3 +16,27 @@ model:
   rope_theta: 10000.0
   tie_embeddings: true
   sliding_window: 0
+  dropout: 0.0
+tokenizer:
+  type: bpe
+  path: ../tokenizers/v3-32k.json
+objective_dir: stages_v3
+training:
+  stage: stage1
+  seed: 0
+  learning_rate: 0.0003
+  min_learning_rate: 0.00003
+  scheduler: cosine
+  warmup_steps: 1000
+  weight_decay: 0.1
+  gradient_clip_norm: 1.0
+  batch_size: 8
+  gradient_accumulation_steps: 32
+  max_seq_len: 2048
+  packing: true
+  overflow: drop
+  target_tokens: 0
+  epochs: 1
+  eval_interval: 250
+  checkpoint_interval: 250
+  log_interval: 10
